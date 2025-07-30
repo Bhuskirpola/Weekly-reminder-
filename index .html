@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Productivity Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-light: #f8fafc;
+            --text-light: #1e293b;
+            --card-light: #ffffff;
+            --border-light: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #94a3b8;
+            
+            --bg-dark: #0f172a;
+            --text-dark: #f1f5f9;
+            --card-dark: #1e293b;
+            --border-dark: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        body.dark-mode header {
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: var(--card-light);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            width: 60px;
+            height: 30px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+        }
+
+        body.dark-mode .theme-toggle {
+            background: var(--card-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        .toggle-switch {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.dark {
+            transform: translateX(30px);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn i {
+            font-size: 14px;
+        }
+
+        .btn.reset {
+            background: var(--danger);
+        }
+
+        .btn.reset:hover {
+            background: #dc2626;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            background: var(--card-light);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        body.dark-mode .section {
+            background: var(--card-dark);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .section-title {
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .section-title h2 {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .priority-item {
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background: rgba(99, 102, 241, 0.05);
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .priority-item {
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid var(--border-dark);
+        }
+
+        .priority-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .priority-checkbox {
+            width: 22px;
+            height: 22px;
+            margin-right: 12px;
+            accent-color: var(--primary);
+        }
+
+        .priority-title {
+            flex: 1;
+            font-weight: 500;
+            padding: 5px 0;
+            border: none;
+            background: transparent;
+            outline: none;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .priority-title {
+            color: var(--text-dark);
+        }
+
+        .priority-title:focus {
+            border-bottom: 1px dashed var(--primary);
+        }
+
+        .delete-priority {
+            color: var(--gray);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-priority:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .habit-tracker {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .habit-day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .habit-day label {
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: var(--gray);
+        }
+
+        .habit-checkbox {
+            width: 26px;
+            height: 26px;
+            accent-color: var(--primary);
+        }
+
+        .days-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .days-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .days-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .day-column {
+            background: var(--card-light);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .day-column {
+            background: var(--card-dark);
+            border: 1px solid var(--border-dark);
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        body.dark-mode .day-header {
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .day-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .add-task-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-list {
+            min-height: 150px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-light);
+        }
+
+        body.dark-mode .task-item {
+            border-bottom: 1px dashed var(--border-dark);
+        }
+
+        .task-checkbox {
+            margin-right: 12px;
+            margin-top: 4px;
+            accent-color: var(--primary);
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-text {
+            background: transparent;
+            border: none;
+            width: 100%;
+            padding: 4px 0;
+            color: var(--text-light);
+            resize: none;
+            min-height: 24px;
+            outline: none;
+        }
+
+        body.dark-mode .task-text {
+            color: var(--text-dark);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .task-time {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        body.dark-mode .task-time {
+            background: rgba(79, 70, 229, 0.2);
+            border: 1px solid var(--border-dark);
+        }
+
+        .task-delete {
+            color: var(--gray);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-delete:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .notification-section {
+            margin-top: 30px;
+        }
+
+        .notification-item {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        body.dark-mode .notification-item {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+
+        .notification-icon {
+            color: var(--warning);
+            font-size: 20px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .notification-desc {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .mobile-collapse {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .mobile-collapse {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                cursor: pointer;
+                padding: 15px;
+                background: rgba(99, 102, 241, 0.1);
+                border-radius: 8px;
+                margin-bottom: 15px;
+            }
+            
+            body.dark-mode .mobile-collapse {
+                background: rgba(79, 70, 229, 0.2);
+            }
+            
+            .collapsed .priority-section {
+                display: none;
+            }
+        }
+
+        .notification-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .notification-btn {
+            background: var(--warning);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .notification-btn:hover {
+            opacity: 0.9;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        body.dark-mode footer {
+            border-top: 1px solid var(--border-dark);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-calendar-check"></i>
+                <h1>Weekly Planner</h1>
+            </div>
+            <div class="controls">
+                <div class="theme-toggle" id="themeToggle">
+                    <div class="toggle-switch"></div>
+                </div>
+                <button class="btn reset" id="resetBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Reset Week
+                </button>
+            </div>
+        </header>
+
+        <div class="mobile-collapse" id="mobileCollapse">
+            <h3><i class="fas fa-bullseye"></i> Weekly Priorities</h3>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+
+        <div class="main-grid">
+            <div class="priority-section" id="prioritySection">
+                <div class="section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-bullseye"></i> Weekly Priorities</h2>
+                        <button class="btn" id="addPriorityBtn">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                    <div id="prioritiesContainer">
+                        <!-- Priorities will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-section">
+                <div class="section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-tasks"></i> Daily Tasks</h2>
+                    </div>
+                    <div class="days-container" id="daysContainer">
+                        <!-- Days will be added here -->
+                    </div>
+                </div>
+
+                <div class="section notification-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-bell"></i> Notifications</h2>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Task Reminders</div>
+                            <div class="notification-desc">You'll receive notifications 30 minutes before scheduled tasks</div>
+                        </div>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">End-of-Day Summary</div>
+                            <div class="notification-desc">Daily reminder for incomplete weekly priorities at 8 PM</div>
+                        </div>
+                    </div>
+                    <div class="notification-actions">
+                        <button class="notification-btn" id="enableNotifications">
+                            <i class="fas fa-bell"></i> Enable Notifications
+                        </button>
+                        <button class="notification-btn" style="background: var(--primary);">
+                            <i class="fas fa-cog"></i> Notification Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Weekly Planner &copy; 2023 | All data stored locally in your browser</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const resetBtn = document.getElementById('resetBtn');
+        const addPriorityBtn = document.getElementById('addPriorityBtn');
+        const prioritiesContainer = document.getElementById('prioritiesContainer');
+        const daysContainer = document.getElementById('daysContainer');
+        const enableNotifications = document.getElementById('enableNotifications');
+        const mobileCollapse = document.getElementById('mobileCollapse');
+        const prioritySection = document.getElementById('prioritySection');
+
+        // Days of the week
+        const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const allDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        // App State
+        let appState = {
+            priorities: [],
+            tasks: {},
+            darkMode: false
+        };
+
+        // Initialize app
+        function initApp() {
+            loadFromLocalStorage();
+            renderPriorities();
+            renderDays();
+            setupThemeToggle();
+            
+            // Setup mobile collapse
+            mobileCollapse.addEventListener('click', () => {
+                prioritySection.classList.toggle('collapsed');
+                const icon = mobileCollapse.querySelector('i');
+                if (prioritySection.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
+            });
+        }
+
+        // Load data from localStorage
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('weeklyPlanner');
+            if (savedData) {
+                appState = JSON.parse(savedData);
+            } else {
+                // Initialize with default data
+                appState.priorities = [
+                    { id: 1, title: 'Exercise 30 minutes', checked: false, habits: Array(7).fill(false) },
+                    { id: 2, title: 'Read 20 pages', checked: false, habits: Array(7).fill(false) },
+                    { id: 3, title: 'Meditate for 10 minutes', checked: false, habits: Array(7).fill(false) }
+                ];
+                
+                // Initialize tasks for each day
+                weekdays.forEach(day => {
+                    appState.tasks[day] = [
+                        { id: Date.now() + Math.random(), text: 'Check emails', checked: false, time: '09:00' },
+                        { id: Date.now() + Math.random(), text: 'Team meeting', checked: false, time: '11:00' }
+                    ];
+                });
+                
+                saveToLocalStorage();
+            }
+            
+            // Apply dark mode
+            if (appState.darkMode) {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.toggle-switch').classList.add('dark');
+            }
+        }
+
+        // Save data to localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('weeklyPlanner', JSON.stringify(appState));
+        }
+
+        // Theme toggle functionality
+        function setupThemeToggle() {
+            themeToggle.addEventListener('click', () => {
+                const body = document.body;
+                const toggleSwitch = document.querySelector('.toggle-switch');
+                
+                body.classList.toggle('dark-mode');
+                toggleSwitch.classList.toggle('dark');
+                
+                appState.darkMode = body.classList.contains('dark-mode');
+                saveToLocalStorage();
+            });
+        }
+
+        // Render priorities
+        function renderPriorities() {
+            prioritiesContainer.innerHTML = '';
+            
+            if (appState.priorities.length === 0) {
+                prioritiesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bullseye"></i>
+                        <p>No priorities added yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            appState.priorities.forEach((priority, pIndex) => {
+                const priorityEl = document.createElement('div');
+                priorityEl.className = 'priority-item';
+                priorityEl.innerHTML = `
+                    <div class="priority-header">
+                        <input type="checkbox" class="priority-checkbox" ${priority.checked ? 'checked' : ''} 
+                            data-id="${priority.id}" data-type="priority">
+                        <input type="text" class="priority-title" value="${priority.title}" 
+                            data-id="${priority.id}">
+                        <button class="delete-priority" data-id="${priority.id}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="habit-tracker">
+                        ${allDays.map((day, index) => `
+                            <div class="habit-day">
+                                <label>${day.substring(0, 3)}</label>
+                                <input type="checkbox" class="habit-checkbox" 
+                                    data-id="${priority.id}" 
+                                    data-day="${index}" 
+                                    ${priority.habits[index] ? 'checked' : ''}>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                prioritiesContainer.appendChild(priorityEl);
+            });
+            
+            // Add event listeners
+            document.querySelectorAll('.priority-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handlePriorityCheck);
+            });
+            
+            document.querySelectorAll('.priority-title').forEach(input => {
+                input.addEventListener('input', handlePriorityTitleChange);
+            });
+            
+            document.querySelectorAll('.delete-priority').forEach(button => {
+                button.addEventListener('click', handleDeletePriority);
+            });
+            
+            document.querySelectorAll('.habit-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handleHabitCheck);
+            });
+        }
+
+        // Render days and tasks
+        function renderDays() {
+            daysContainer.innerHTML = '';
+            
+            weekdays.forEach(day => {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'day-column';
+                dayEl.innerHTML = `
+                    <div class="day-header">
+                        <div class="day-title">${day}</div>
+                        <button class="add-task-btn" data-day="${day}">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="task-list" id="task-list-${day}">
+                        ${renderTasksForDay(day)}
+                    </div>
+                `;
+                daysContainer.appendChild(dayEl);
+            });
+            
+            // Add event listeners for task buttons
+            document.querySelectorAll('.add-task-btn').forEach(button => {
+                button.addEventListener('click', handleAddTask);
+            });
+            
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handleTaskCheck);
+            });
+            
+            document.querySelectorAll('.task-text').forEach(textarea => {
+                textarea.addEventListener('input', handleTaskTextChange);
+            });
+            
+            document.querySelectorAll('.task-delete').forEach(button => {
+                button.addEventListener('click', handleDeleteTask);
+            });
+            
+            document.querySelectorAll('.set-reminder').forEach(button => {
+                button.addEventListener('click', handleSetReminder);
+            });
+        }
+
+        // Render tasks for a specific day
+        function renderTasksForDay(day) {
+            const tasks = appState.tasks[day] || [];
+            
+            if (tasks.length === 0) {
+                return `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>No tasks for today</p>
+                    </div>
+                `;
+            }
+            
+            return tasks.map(task => `
+                <div class="task-item">
+                    <input type="checkbox" class="task-checkbox" ${task.checked ? 'checked' : ''} 
+                        data-id="${task.id}" data-day="${day}">
+                    <div class="task-content">
+                        <textarea class="task-text">${task.text}</textarea>
+                        <div class="task-actions">
+                            <div class="task-time">
+                                <i class="fas fa-clock"></i>
+                                ${task.time || 'Set time'}
+                            </div>
+                            <button class="task-delete" data-id="${task.id}" data-day="${day}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Event Handlers
+        function handlePriorityCheck(e) {
+            const id = parseInt(e.target.dataset.id);
+            const priority = appState.priorities.find(p => p.id === id);
+            if (priority) {
+                priority.checked = e.target.checked;
+                saveToLocalStorage();
+            }
+        }
+
+        function handlePriorityTitleChange(e) {
+            const id = parseInt(e.target.dataset.id);
+            const priority = appState.priorities.find(p => p.id === id);
+            if (priority) {
+                priority.title = e.target.value;
+                saveToLocalStorage();
+            }
+        }
+
+        function handleDeletePriority(e) {
+            const id = parseInt(e.target.closest('button').dataset.id);
+            appState.priorities = appState.priorities.filter(p => p.id !== id);
+            saveToLocalStorage();
+            renderPriorities();
+        }
+
+        function handleHabitCheck(e) {
+            const id = parseInt(e.target.dataset.id);
+            const dayIndex = parseInt(e.target.dataset.day);
+            const priority = appState.priorities.find(p => p.id === id);
+            if (priority) {
+                priority.habits[dayIndex] = e.target.checked;
+                
+                // Update priority checked status if all habits are checked
+                if (priority.habits.every(h => h)) {
+                    priority.checked = true;
+                }
+                
+                saveToLocalStorage();
+                renderPriorities();
+            }
+        }
+
+        function handleAddTask(e) {
+            const day = e.target.closest('button').dataset.day;
+            const newTask = {
+                id: Date.now() + Math.random(),
+                text: 'New task',
+                checked: false,
+                time: null
+            };
+            
+            if (!appState.tasks[day]) {
+                appState.tasks[day] = [];
+            }
+            
+            appState.tasks[day].push(newTask);
+            saveToLocalStorage();
+            renderDays();
+        }
+
+        function handleTaskCheck(e) {
+            const taskId = e.target.dataset.id;
+            const day = e.target.dataset.day;
+            
+            const task = appState.tasks[day].find(t => t.id == taskId);
+            if (task) {
+                task.checked = e.target.checked;
+                saveToLocalStorage();
+            }
+        }
+
+        function handleTaskTextChange(e) {
+            const taskId = e.target.closest('.task-item').querySelector('.task-checkbox').dataset.id;
+            const day = e.target.closest('.task-item').querySelector('.task-checkbox').dataset.day;
+            
+            const task = appState.tasks[day].find(t => t.id == taskId);
+            if (task) {
+                task.text = e.target.value;
+                saveToLocalStorage();
+            }
+        }
+
+        function handleDeleteTask(e) {
+            const taskId = e.target.closest('button').dataset.id;
+            const day = e.target.closest('button').dataset.day;
+            
+            appState.tasks[day] = appState.tasks[day].filter(t => t.id != taskId);
+            saveToLocalStorage();
+            renderDays();
+        }
+
+        function handleSetReminder(e) {
+            const taskId = e.target.closest('button').dataset.id;
+            const day = e.target.closest('button').dataset.day;
+            
+            // In a real app, this would show a time picker
+            const time = prompt('Set reminder time (HH:MM):', '09:00');
+            if (time && /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time)) {
+                const task = appState.tasks[day].find(t => t.id == taskId);
+                if (task) {
+                    task.time = time;
+                    saveToLocalStorage();
+                    renderDays();
+                    
+                    // Show success message
+                    alert(`Reminder set for ${time}`);
+                }
+            } else if (time) {
+                alert('Please enter a valid time in HH:MM format');
+            }
+        }
+
+        function handleResetWeek() {
+            if (confirm('Are you sure you want to reset all progress for the week?')) {
+                // Reset priorities
+                appState.priorities.forEach(priority => {
+                    priority.checked = false;
+                    priority.habits = Array(7).fill(false);
+                });
+                
+                // Reset tasks
+                for (const day in appState.tasks) {
+                    appState.tasks[day].forEach(task => {
+                        task.checked = false;
+                    });
+                }
+                
+                saveToLocalStorage();
+                renderPriorities();
+                renderDays();
+                
+                alert('Week has been reset!');
+            }
+        }
+
+        function handleEnableNotifications() {
+            // In a real app, this would request notification permissions
+            alert('Notifications enabled! You will receive reminders for your tasks and priorities.');
+        }
+
+        // Add new priority
+        addPriorityBtn.addEventListener('click', () => {
+            const newPriority = {
+                id: Date.now(),
+                title: 'New priority',
+                checked: false,
+                habits: Array(7).fill(false)
+            };
+            
+            appState.priorities.push(newPriority);
+            saveToLocalStorage();
+            renderPriorities();
+        });
+
+        // Reset week button
+        resetBtn.addEventListener('click', handleResetWeek);
+
+        // Enable notifications
+        enableNotifications.addEventListener('click', handleEnableNotifications);
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
